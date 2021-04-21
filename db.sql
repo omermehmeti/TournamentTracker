@@ -1,3 +1,5 @@
+#run it two times
+
 CREATE TABLE `prizes` (
    `id` int NOT NULL AUTO_INCREMENT,
    `PlaceNumber` int NOT NULL,
