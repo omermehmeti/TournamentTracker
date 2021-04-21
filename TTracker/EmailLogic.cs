@@ -13,7 +13,7 @@ namespace TTracker
         {
             string fromAddress = System.Configuration.ConfigurationManager.AppSettings["SenderEmail"];
             //System.Configuration.ConfigurationManager.AppSettings["DisplaySender"]
-            MailAddress fromMailAddress = new MailAddress("travelagencykosovo1@gmail.com", "Omer Mehmeti");
+            MailAddress fromMailAddress = new MailAddress();
 
             MailMessage message = new MailMessage();
             message.To.Add(to);
@@ -22,7 +22,7 @@ namespace TTracker
             message.IsBodyHtml = true;
             message.From = fromMailAddress;
             SmtpClient Client = new SmtpClient();
-            Client.Credentials = new System.Net.NetworkCredential("travelagencykosovo1@gmail.com","HelloWorld321" );
+            Client.Credentials = new System.Net.NetworkCredential( "","");
             Client.Host = "smtp.gmail.com";
             Client.Send(message);
         }
