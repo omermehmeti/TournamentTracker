@@ -86,6 +86,7 @@
             this.RoundDropdown.Name = "RoundDropdown";
             this.RoundDropdown.Size = new System.Drawing.Size(234, 21);
             this.RoundDropdown.TabIndex = 3;
+            this.RoundDropdown.SelectedIndexChanged += new System.EventHandler(this.RoundDropdown_SelectedIndexChanged);
             // 
             // Unplayedbox
             // 
@@ -99,6 +100,7 @@
             this.Unplayedbox.TabIndex = 4;
             this.Unplayedbox.Text = "Unplayed Only";
             this.Unplayedbox.UseVisualStyleBackColor = true;
+            this.Unplayedbox.CheckedChanged += new System.EventHandler(this.Unplayedbox_CheckedChanged);
             // 
             // matchupListBox
             // 
@@ -108,6 +110,7 @@
             this.matchupListBox.Name = "matchupListBox";
             this.matchupListBox.Size = new System.Drawing.Size(321, 197);
             this.matchupListBox.TabIndex = 5;
+            this.matchupListBox.SelectedIndexChanged += new System.EventHandler(this.matchupListBox_SelectedIndexChanged);
             // 
             // teamOneName
             // 
@@ -194,6 +197,7 @@
             this.ScoreButton.TabIndex = 13;
             this.ScoreButton.Text = "Score";
             this.ScoreButton.UseVisualStyleBackColor = true;
+            this.ScoreButton.Click += new System.EventHandler(this.ScoreButton_Click);
             // 
             // Tournamentv
             // 

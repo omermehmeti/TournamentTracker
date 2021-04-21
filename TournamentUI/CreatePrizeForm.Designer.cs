@@ -159,7 +159,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Snow;
-            this.ClientSize = new System.Drawing.Size(424, 450);
+            this.ClientSize = new System.Drawing.Size(418, 450);
             this.Controls.Add(this.CreatePrizeButton);
             this.Controls.Add(this.OrLabel);
             this.Controls.Add(this.PleacePercentageValue);
@@ -174,7 +174,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CreatePrizeForm";
             this.Text = "Prize";
-            
             this.ResumeLayout(false);
             this.PerformLayout();
 

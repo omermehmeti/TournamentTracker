@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TTracker;
 using TTracker.Models;
 
 namespace TournamentUI
@@ -130,10 +131,14 @@ namespace TournamentUI
             //Create tournament entry
             //Create alll of the prizes entries
             //Create all of the team entries
+
             TTracker.GlobalConfig.Connections.CreateTournamentModel(Tm);
+            //TTracker.TournamentLogic.UpdateTournamentResults(Tm);
+            Tm.AlertUsersToNewRound();
+            Tournamentv frm = new Tournamentv(Tm);
+            frm.Show();
+            this.Close();
 
-
-            
 
             //Create our matchups
         }
