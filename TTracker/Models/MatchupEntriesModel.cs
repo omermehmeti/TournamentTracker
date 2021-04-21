@@ -12,6 +12,8 @@ namespace TTracker.Models
         /// <summary>
         /// Represents one team in the matchup
         /// </summary>
+
+        public int TeamCompetingId { get; set; }
         public TeamModel TeamCompeting { get; set; }
         /// <summary>
         /// Represents the Particular score;
@@ -20,6 +22,8 @@ namespace TTracker.Models
         /// <summary>
         /// Represents the matchup tha this team come as winner.
         /// </summary>
+        /// 
+        public int ParentMatchupId { get; set; }
         public MatchupModel ParentMatching { get; set; }
         //public MatchupEntriesModel(double InitialScore)
         //{

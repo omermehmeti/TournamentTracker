@@ -9,12 +9,14 @@ namespace TTracker.DataAccess
 {
     public interface IDataConnection
     {
-        PrizeModel CreatePrize(PrizeModel Model);
-        PersonModel CreatePerson(PersonModel Model);
-        TeamModel CreateTeam(TeamModel Model);
-        TournamentModel CreateTournamentModel(TournamentModel model);
+        void CreatePrize(PrizeModel Model);
+        void CreatePerson(PersonModel Model);
+        void CreateTeam(TeamModel Model);
+        void CreateTournamentModel(TournamentModel model);
         List<PersonModel> Get_PlayersAll();
         List<TeamModel> Get_TeamsAll();
+        List<TournamentModel> Get_TournamentsAll();
+        void UpdateMatchup(MatchupModel m);
 
     }
 }

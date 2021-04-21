@@ -11,6 +11,7 @@ namespace TTracker
 {
     public static class GlobalConfig
     {
+
         public const string Prizesfile = "PrizeModels.csv";
         public const string Playersfile = "PlayerModels.csv";
         public const string Teamsfile = "TeamModel.csv";

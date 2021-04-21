@@ -15,7 +15,7 @@ namespace TTracker.DataAccess
     public class MysqlConnector : IDataConnection
     {
         private const string db = "tournaments";
-        public PersonModel CreatePerson(PersonModel Model)
+        public void CreatePerson(PersonModel Model)
         {
             using (IDbConnection connection = new MySql.Data.MySqlClient.MySqlConnection(GlobalConfig.CnnString(db)))
             {
@@ -34,11 +34,11 @@ namespace TTracker.DataAccess
                 Model.Id = p.Get<int>("@lid");
 
 
-                return Model;
+                
             }
         }
 
-        public PrizeModel CreatePrize(PrizeModel Model)
+        public void CreatePrize(PrizeModel Model)
         {
             using (IDbConnection connection = new MySql.Data.MySqlClient.MySqlConnection(GlobalConfig.CnnString(db)))
             {
@@ -57,14 +57,14 @@ namespace TTracker.DataAccess
                     Model.Id=p.Get<int>("@lid");
                
 
-                return Model;
+                
             }
 
 
            
         }
 
-        public TeamModel CreateTeam(TeamModel Model)
+        public void CreateTeam(TeamModel Model)
         {
             using (IDbConnection connection = new MySql.Data.MySqlClient.MySqlConnection(GlobalConfig.CnnString(db)))
             {
@@ -94,26 +94,27 @@ namespace TTracker.DataAccess
                 }
 
 
-                return Model;
+                
             }
 
         }
 
-        public TournamentModel CreateTournamentModel(TournamentModel Model)
+        public void CreateTournamentModel(TournamentModel Model)
         {
             using (IDbConnection connection = new MySql.Data.MySqlClient.MySqlConnection(GlobalConfig.CnnString(db)))
             {
+
+
                 SaveTournament(connection, Model);
-
-
                 SaveTournamentPrizes(connection, Model);
                 SaveTournamentTeams(connection, Model);
                 SaveTournamentRounds(connection, Model);
 
 
-                return Model;
+
+                TTracker.TournamentLogic.UpdateTournamentResults(Model);
             }
-            throw new NotImplementedException();
+        
         }
         private void SaveTournamentRounds(IDbConnection connection, TournamentModel Model)
         {
@@ -244,6 +245,148 @@ namespace TTracker.DataAccess
             }
             return output;
 
+        }
+
+        public List<TournamentModel> Get_TournamentsAll()
+        {
+            List<TournamentModel> output;
+            var p = new DynamicParameters();
+            using (IDbConnection connection = new MySql.Data.MySqlClient.MySqlConnection(GlobalConfig.CnnString(db)))
+            {
+                output = connection.Query<TournamentModel>("spTournamentsGetAll").ToList();
+
+                foreach (TournamentModel t  in output)
+                {
+                    // Populate Prizes
+                    p = new DynamicParameters();
+                    p.Add("@TournamentId", t.Id);
+                    t.Prizes = connection.Query<PrizeModel>("spGetPrizesByTournament", p, commandType: CommandType.StoredProcedure).ToList();
+
+
+                    //populate teams
+                    p = new DynamicParameters();
+                    p.Add("@TournamentId", t.Id);
+                    t.EnteredTeams = connection.Query<TeamModel>("spGetTeamByTournament", p, commandType: CommandType.StoredProcedure).ToList();
+
+                    foreach (TeamModel tm in t.EnteredTeams)
+                    {
+                        var pi = new DynamicParameters();
+                        pi.Add("@TeamId", tm.Id);
+                        tm.TeamMembers = connection.Query<PersonModel>("spTeamMembersGetByTeamId", pi, commandType: CommandType.StoredProcedure).ToList();
+                    }
+
+                    //populate rounds
+                     p = new DynamicParameters();
+                    p.Add("@TournamentId", t.Id);
+                    List<MatchupModel> matchups = connection.Query<MatchupModel>("spGetMatchupGetByTournament", p, commandType: CommandType.StoredProcedure).ToList();
+
+                    foreach (MatchupModel m in matchups)
+                    {
+                         p = new DynamicParameters();
+                        p.Add("@MatchupId", m.Id);
+                        m.Entries= connection.Query<MatchupEntriesModel>("spGetMatchupEntriesByMatchup", p, commandType: CommandType.StoredProcedure).ToList();
+
+
+                        //populate each entry 2 models
+                        //populate each matchup one model
+
+                        List<TeamModel> allTeams = Get_TeamsAll();
+
+                        if (m.WinnerId > 0)
+                        {
+                            m.Winner = allTeams.Where(x => x.Id == m.WinnerId).First();
+                        }
+                        foreach (MatchupEntriesModel me in m.Entries)
+                        {
+                            if (me.TeamCompetingId > 0)
+                            {
+                                me.TeamCompeting = allTeams.Where(x => x.Id == me.TeamCompetingId).First();
+                            }
+                            if (me.ParentMatchupId > 0)
+                                {
+                                    me.ParentMatching = matchups.Where(x => x.Id == (me.ParentMatchupId)).First();
+                                }
+                            
+                           
+
+                        }
+                    }
+
+
+                    
+                    /// List<List<MatchupModel>>
+                    // Populating the rounds 
+                    List<MatchupModel> currentrow = new List<MatchupModel>();
+                    int currentround = 1;
+                    foreach (MatchupModel m in matchups)
+                    {
+                        /// Big BUG Here
+                        if (m.MatchupRound > currentround)
+                        {
+                            t.Rounds.Add(currentrow);
+                            currentrow = new List<MatchupModel>();
+                            currentround += 1;
+                        }
+                        currentrow.Add(m);
+
+                    }
+                    t.Rounds.Add(currentrow);
+
+
+
+                }
+
+
+               // Populate Prizes 
+               //Populate Teams
+               //Populate Rounds
+               //
+            }
+            return output;
+
+            
+        }
+
+        public void UpdateMatchup(MatchupModel m)
+        {
+            using (IDbConnection connection = new MySql.Data.MySqlClient.MySqlConnection(GlobalConfig.CnnString(db)))
+            {
+                var p = new DynamicParameters();
+                
+                if (m.Winner != null)
+                {
+                    p.Add("@ID", m.Id);
+                    p.Add("@winnerId", m.Winner.Id);
+                    connection.Execute("Matchups_Update", p, commandType: CommandType.StoredProcedure);
+                   
+
+
+
+                    
+                }
+                foreach (MatchupEntriesModel me in m.Entries)
+                {
+
+                    if (me.TeamCompeting != null)
+                    {
+                        p = new DynamicParameters();
+                        p.Add("@ID", me.Id);
+                        p.Add("@a", me.TeamCompeting.Id);
+                        p.Add("@score", me.Score);
+
+                        connection.Execute("Matchup_Entries_Update", p, commandType: CommandType.StoredProcedure);
+                    }
+
+
+
+
+                }
+
+
+
+            }
+
+            
         }
     }
 }
