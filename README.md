@@ -4,7 +4,7 @@ A Tournament Tracker
 
 EDIT TournamentTracker/TournamentUi/app.config  
 
-
+```config
 
         <add key="filePath" value="ur file path u want to store the  data" />
         <add key="ClientSettingsProvider.ServiceUri" value="" />
@@ -24,4 +24,6 @@ EDIT TournamentTracker/TournamentUi/app.config
          <connectionStrings>
           <add name="tournaments" connectionString="Server=localhost;Port=3310;Database=tournaments;Uid=root;Pwd=1234567890;" providerName="MySql.Data.MySqlClient" />
         </connectionStrings>
+        
+````
       
